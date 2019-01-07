@@ -16,5 +16,10 @@ populate_append() {
 IMAGE_INSTALL_append = " \
     nftables \
     dhcp-client \
+    openssh \
+    openssh-sftp \
 "
 
+IMAGE_FEATURES_append = " \
+    ssh-server-openssh \
+"

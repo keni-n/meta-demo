@@ -2,9 +2,9 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 DEPENDS += "u-boot-mkimage-native"
 
-XEN_REL="unstable"
+XEN_REL="4.11"
 
-XEN_BRANCH = "master"
+XEN_BRANCH = "staging-${XEN_REL}"
 
 SRCREV = "${AUTOREV}"
 
@@ -32,9 +32,6 @@ SYSTEMD_SERVICE_${PN}-xencommons_remove += " \
     xenstored_ro.socket \
     "
 
-FILES_${PN}-libxendevicemodel = "${libdir}/libxendevicemodel.so.*"
-FILES_${PN}-libxendevicemodel-dev = "${libdir}/libxendevicemodel.so"
-
 FILES_${PN}-libxentoolcore = "${libdir}/libxentoolcore.so.*"
 FILES_${PN}-libxentoolcore-dev = "${libdir}/libxentoolcore.so"
 
@@ -47,8 +44,6 @@ FILES_${PN}-xendiag += " \
     "
 
 PACKAGES_append = "\
-    ${PN}-libxendevicemodel \
-    ${PN}-libxendevicemodel-dev \
     ${PN}-libxentoolcore \
     ${PN}-libxentoolcore-dev \
     ${PN}-pkgconfig \
