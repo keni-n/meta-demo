@@ -32,9 +32,6 @@ SYSTEMD_SERVICE_${PN}-xencommons_remove += " \
     xenstored_ro.socket \
     "
 
-FILES_${PN}-libxendevicemodel = "${libdir}/libxendevicemodel.so.*"
-FILES_${PN}-libxendevicemodel-dev = "${libdir}/libxendevicemodel.so"
-
 FILES_${PN}-libxentoolcore = "${libdir}/libxentoolcore.so.*"
 FILES_${PN}-libxentoolcore-dev = "${libdir}/libxentoolcore.so"
 
@@ -47,8 +44,6 @@ FILES_${PN}-xendiag += " \
     "
 
 PACKAGES_append = "\
-    ${PN}-libxendevicemodel \
-    ${PN}-libxendevicemodel-dev \
     ${PN}-libxentoolcore \
     ${PN}-libxentoolcore-dev \
     ${PN}-pkgconfig \
