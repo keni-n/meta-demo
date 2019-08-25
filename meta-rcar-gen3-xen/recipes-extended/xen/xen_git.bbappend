@@ -1,58 +1,43 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
-DEPENDS += "u-boot-mkimage-native"
+################################################################################
+# Following inc file defines XEN version for the product and its SRC_URI
+################################################################################
+require xen-version.inc
 
-XEN_REL="4.11"
+################################################################################
+# Renesas R-Car
+################################################################################
+# N.B. as Xen doesn't support partial .cfg as kernel does
+# we need to patch it to select disable IPMMU PGT sharing for
+# H3 v2.0 and M3 machines
+SRC_URI_append_r8a7795-es2 = " \
+    file://0001-ipmmu-vmsa-Disable-CONFIG_RCAR_IPMMU_PGT_IS_SHARED.patch \
+"
 
-XEN_BRANCH = "staging-${XEN_REL}"
+SRC_URI_append_r8a7796 = " \
+    file://0001-ipmmu-vmsa-Disable-CONFIG_RCAR_IPMMU_PGT_IS_SHARED.patch \
+"
 
-SRCREV = "${AUTOREV}"
+################################################################################
+# Generic
+################################################################################
 
-EXTRA_OEMAKE += " CONFIG_QEMU_XEN=n"
-
-DEFAULT_PREFERENCE = "1"
+FLASK_POLICY_FILE = "xenpolicy-${XEN_REL}.0"
+FILES_${PN}-flask = " \
+    /boot/${FLASK_POLICY_FILE} \
+"
 
 do_deploy_append () {
     if [ -f ${D}/boot/xen ]; then
         uboot-mkimage -A arm64 -C none -T kernel -a 0x78080000 -e 0x78080000 -n "XEN" -d ${D}/boot/xen ${DEPLOYDIR}/xen-${MACHINE}.uImage
+        ln -sfr ${DEPLOYDIR}/xen-${MACHINE}.uImage ${DEPLOYDIR}/xen-uImage
     fi
+
+    if [ -f ${D}/boot/${FLASK_POLICY_FILE} ]; then
+        ln -sfr ${DEPLOYDIR}/${FLASK_POLICY_FILE} ${DEPLOYDIR}/xenpolicy
+    fi
+
+    # assuming xen-syms always present
+    tar -cJvf ${DEPLOYDIR}/xen-syms.tar.xz ${S}/xen/xen-syms || true
 }
-
-FILES_${PN}-xencommons_remove += " \
-    ${systemd_unitdir}/system/xenstored.socket \
-    ${systemd_unitdir}/system/xenstored_ro.socket \
-    "
-
-FILES_${PN}-xencommons += " \
-    ${systemd_unitdir}/system/xendriverdomain.service \
-    "
-
-SYSTEMD_SERVICE_${PN}-xencommons_remove += " \
-    xenstored.socket \
-    xenstored_ro.socket \
-    "
-
-FILES_${PN}-libxentoolcore = "${libdir}/libxentoolcore.so.*"
-FILES_${PN}-libxentoolcore-dev = "${libdir}/libxentoolcore.so"
-
-FILES_${PN}-pkgconfig = "\
-    ${datadir}/pkgconfig \
-    "
-
-FILES_${PN}-xendiag += " \
-    ${sbindir}/xen-diag \
-    "
-
-PACKAGES_append = "\
-    ${PN}-libxentoolcore \
-    ${PN}-libxentoolcore-dev \
-    ${PN}-pkgconfig \
-    ${PN}-xendiag \
-    "
-
-RDEPENDS_${PN}-base_remove = "\
-    ${PN}-blktap \
-    ${PN}-libblktapctl \
-    ${PN}-libvhd \
-    "
-

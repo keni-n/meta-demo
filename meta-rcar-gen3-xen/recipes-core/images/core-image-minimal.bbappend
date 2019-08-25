@@ -1,6 +1,12 @@
 #Add Xen to build
 IMAGE_INSTALL_append = " \
     xen-base \
+    xen-flask \
+    xen-flask-tools \
+    xen-misc \
+    xen-xenmon \
+    xen-xenstat \
+    xen-xentrace \
 "
 
 # Do not support secure environment
