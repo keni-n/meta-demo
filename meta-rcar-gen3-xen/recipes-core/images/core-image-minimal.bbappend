@@ -24,6 +24,7 @@ IMAGE_INSTALL_append = " \
     dhcp-client \
     openssh \
     openssh-sftp \
+    netperf \
 "
 
 IMAGE_FEATURES_append = " \

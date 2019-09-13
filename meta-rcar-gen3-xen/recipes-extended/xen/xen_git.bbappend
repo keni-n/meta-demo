@@ -16,8 +16,12 @@ DISABLE_IPMMU_PGT_IS_SHARED = "\
     file://0001-ipmmu-vmsa-Disable-CONFIG_RCAR_IPMMU_PGT_IS_SHARED.patch \
 "
 
+#SRC_URI_append = " \
+#    ${@base_conditional("GEN3_ES", "2.0", "${DISABLE_IPMMU_PGT_IS_SHARED}", "", d)} \
+#"
 SRC_URI_append = " \
-    ${@base_conditional("GEN3_ES", "2.0", "${DISABLE_IPMMU_PGT_IS_SHARED}", "", d)} \
+    ${DISABLE_IPMMU_PGT_IS_SHARED} \
+    file://0002-debug-enable.patch \
 "
 
 ################################################################################
